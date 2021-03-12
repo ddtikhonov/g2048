@@ -1,12 +1,18 @@
 .cell-container
 {
 	display: block;
-	background-color: #dda15e;
-	width: 100%;
-	height: 100%;
-	position: relative;
+	background-color: transparent;
+	width: 96.5px;
+	height: 96.5px;
+	position: absolute;
 	margin: 0;
 	padding: 0;
+	z-index: 100;
+
+	&.animating
+	{
+		transition: all ease-out 0.1s;
+	}
 }
 
 .cell-aligner
@@ -23,16 +29,16 @@
 	-webkit-justify-content: center;
 	-ms-flex-pack: center;
 	justify-content: center;
-	width: 71.5px;
-	height: 71.5px;
+	width: 100%;
+	height: 100%;
 }
 
 .cell
 {
 	display: inline-block;
 	background-color: #fefae0;
-	width: 60px;
-	height: 60px;
+	width: 70px;
+	height: 70px;
 	position: relative;
 	margin: 0;
 	padding: 0;
@@ -43,6 +49,7 @@
 	//-webkit-box-shadow: 1px 1px 0px 1px rgba(0,0,0,0.5);
 	//box-shadow: 1px 1px 0px 1px rgba(0,0,0,0.5);
 }
+
 .number
 {
 	display: block;
@@ -55,7 +62,7 @@
 	color: #bc6c25;
 	font-family: arial, sans-serif;
 	font-weight: 900;
-	font-size: 30px;
-	line-height: 60px;
+	font-size: 36px;
+	line-height: 70px;
 	text-decoration: none;
 }

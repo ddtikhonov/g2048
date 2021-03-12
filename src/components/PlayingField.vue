@@ -1,5 +1,13 @@
 <template>
-  <div class="playing-field-wrapper">
+  <div
+    ref="playingFieldWrapper"
+    class="playing-field-wrapper"
+    tabindex="0"
+    @keyup.up="makeMoveUp"
+    @keyup.down="makeMoveDown"
+    @keyup.left="makeMoveLeft"
+    @keyup.right="makeMoveRight"
+  >
     <div class="playing-field-container">
       <div class="controls-block">
         <div class="controls-item up-btn">
@@ -23,21 +31,22 @@
                 @click="makeMoveRight">RIGHT</span>
         </div>
 
-        <div
-            ref="playingField"
-            class="playing-field"
-            tabindex="0"
-            @keyup.up="makeMoveUp"
-            @keyup.down="makeMoveDown"
-            @keyup.left="makeMoveLeft"
-            @keyup.right="makeMoveRight"
-        >
+        <div class="playing-field">
           <template v-for="row in cells">
-            <div v-for="cell in row" :key="cell.id" class="playing-field-cell">
-              <PlayingFieldCell :value="cell.value"></PlayingFieldCell>
-            </div>
+            <div v-for="cell in row" :key="cell.id" class="playing-field-cell"></div>
           </template>
         </div>
+
+        <div class="numbers-field-wrapper">
+          <div class="numbers-field">
+            <template v-for="row in cells">
+              <template v-for="cell in row">
+                <PlayingFieldCell :key="cell.id" :cell="cell"></PlayingFieldCell>
+              </template>
+            </template>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -67,7 +76,7 @@ export default {
     this.newGame();
   },
   mounted() {
-    this.$refs.playingField.focus();
+    this.$refs.playingFieldWrapper.focus();
   },
   methods: {
     //
@@ -162,13 +171,29 @@ export default {
               this.$store.commit('field/setSingleCell', {
                 id: cellsList[i].id,
                 value: cellsList[i + 1].value,
-                changed: false,
+                prevValue: cellsList[i + 1].prevValue,
+                nextValue: cellsList[i + 1].nextValue,
+                xCoordinateFrom:
+                    cellsList[i + 1].xCoordinateFrom === null
+                        ? cellsList[i + 1].xCoordinateDefault
+                        : cellsList[i + 1].xCoordinateFrom,
+                yCoordinateFrom:
+                    cellsList[i + 1].yCoordinateFrom === null
+                      ? cellsList[i + 1].yCoordinateDefault
+                      : cellsList[i + 1].yCoordinateFrom,
+                xCoordinateTo: cellsList[i].xCoordinateDefault,
+                yCoordinateTo: cellsList[i].yCoordinateDefault,
               });
 
               this.$store.commit('field/setSingleCell', {
                 id: cellsList[i + 1].id,
                 value: 0,
-                changed: false,
+                prevValue: 0,
+                nextValue: 0,
+                xCoordinateFrom: null,
+                yCoordinateFrom: null,
+                xCoordinateTo: null,
+                yCoordinateTo: null,
               });
 
               isChanged = true;
@@ -181,14 +206,31 @@ export default {
             ) {
               this.$store.commit('field/setSingleCell', {
                 id: cellsList[i].id,
-                value: cellsList[i].value * 2,
+                value: cellsList[i].value,
+                prevValue: cellsList[i].value,
+                nextValue: cellsList[i].value * 2,
                 changed: true,
+                xCoordinateFrom: null,
+                yCoordinateFrom: null,
+                xCoordinateTo: null,
+                yCoordinateTo: null,
               });
 
               this.$store.commit('field/setSingleCell', {
                 id: cellsList[i + 1].id,
                 value: 0,
-                changed: false,
+                prevValue: cellsList[i + 1].value,
+                nextValue: 0,
+                xCoordinateFrom:
+                    cellsList[i + 1].xCoordinateFrom === null
+                        ? cellsList[i + 1].xCoordinateDefault
+                        : cellsList[i + 1].xCoordinateFrom,
+                yCoordinateFrom:
+                    cellsList[i + 1].yCoordinateFrom === null
+                        ? cellsList[i + 1].yCoordinateDefault
+                        : cellsList[i + 1].yCoordinateFrom,
+                xCoordinateTo: cellsList[i].xCoordinateDefault,
+                yCoordinateTo: cellsList[i].yCoordinateDefault,
               });
 
               isChanged = true;
@@ -295,10 +337,26 @@ export default {
     // preparations for new step
     //
     nextStep() {
-      this.$store.commit('field/incrementSteps');
-      this.$store.dispatch('field/clearChangedFlags');
-      setTimeout(() => this.$store.dispatch('field/generateRandomNumber'), 200);
-      setTimeout(() => this.canMakeStep() ? this.userMoveMutex = false : this.gameOver(), 400 );
+      //
+      // prepare animations
+      //
+      this.$store.dispatch('field/prepareAnimations').then(() => {
+        //
+        // launch animations
+        //
+        setTimeout(() => {
+          this.$store.dispatch('field/launchAnimations').then(() => {
+            this.$store.commit('field/incrementSteps');
+            this.$store.dispatch('field/clearChangedFlags');
+            setTimeout(() => {
+              this.$store.dispatch('field/generateRandomNumber')
+              .then(() => {
+                this.canMakeStep() ? this.userMoveMutex = false : this.gameOver()
+              })
+            }, 300);
+          });
+        }, 100);
+      });
     },
     //
     // no more steps left

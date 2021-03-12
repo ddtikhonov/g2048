@@ -1,8 +1,13 @@
 <template>
-  <div class="cell-container">
+  <div
+    v-if="value"
+    :ref="'cellContainer' + cell.id"
+    :class="['cell-container', cell.isAnimating ? 'animating' : '']"
+    :style="'top:' + xCoordinate + 'px;left:' + yCoordinate + 'px;'"
+  >
     <div class="cell-aligner">
-      <div v-if="value" class="cell">
-        <span class="number">
+      <div class="cell">
+        <span class="number" :data="JSON.stringify(cell)">
           {{ value }}
         </span>
       </div>
@@ -14,11 +19,22 @@
 export default {
   name: 'PlayingFieldCell',
   props: {
-    value: {
-      type: Number,
-      default: null
+    cell: {
+      type: Object,
+      default: () => {}
     }
-  }
+  },
+  computed: {
+    xCoordinate() {
+      return this.cell.xCoordinateCurrent * 98.5;
+    },
+    yCoordinate() {
+      return this.cell.yCoordinateCurrent * 98.5;
+    },
+    value() {
+      return this.cell.currentValue;
+    }
+  },
 }
 </script>
 

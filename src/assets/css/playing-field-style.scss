@@ -10,6 +10,7 @@
 	padding: 80px 0 15px 0;
 	box-sizing: border-box;
 }
+
 .playing-field-container
 {
 	display: -webkit-box;
@@ -43,8 +44,8 @@
 	grid-column-gap: 2px;
 	grid-row-gap: 2px;
 	background-color: #283618;
-	width: 300px;
-	height: 300px;
+	width: 400px;
+	height: 400px;
 	position: relative;
 	margin: 0;
 	padding: 4px;
@@ -195,4 +196,25 @@
 		cursor: pointer;
 		opacity: 1;
 	}
+}
+
+.numbers-field-wrapper
+{
+	display: block;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	padding: 4px;
+	box-sizing: border-box;
+}
+.numbers-field
+{
+	display: block;
+	width: 100%;
+	height: 100%;
+	position: relative;
+	margin: 0;
+	padding: 0;
 }

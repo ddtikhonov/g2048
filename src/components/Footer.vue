@@ -2,7 +2,7 @@
   <div class="footer-wrapper">
     <div class="footer-container">
       <div class="footer-content">
-        <p class="copyright-text">&copy; 2020 dtikhonov</p>
+        <p class="copyright-text">&copy; 2021 ddtikhonov</p>
       </div>
     </div>
   </div>
